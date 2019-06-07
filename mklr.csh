@@ -25,6 +25,21 @@ endif
 # CHK input file
  set input2=`echo $input  | sed s:'_HR_':'_LR_':g`
  set ofile=`echo $input2 | sed s:'_hr_':'_lr_':g`
+
+# CHK ofile and modify if it does not include LR or lr
+ echo $ofile | grep '_LR_' >/dev/null
+ set chk=$?
+ if ($chk != 0) then
+  echo $ofile | grep '_lr_' >/dev/null
+  if ($chk != 0) then
+   set chkyr=`echo $ofile:r | rev |  cut -c 1-4 | rev`
+   if ($chkyr >= 1900 && $chkyr <= 3000) then
+    set ofile = `echo $ofile | sed s:${chkyr}:LR_${chkyr}:g`
+   else
+    set ofile = `echo $ofile | sed s:'.bin':'_LR.bin':g`
+   endif
+  endif
+ endif
 # echo $ofile
 
  if ($ofile == $input) then
